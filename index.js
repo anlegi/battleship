@@ -54,48 +54,74 @@ const carrier = new Ship("carrier", 5)
 
 const ships = [destroyer, submarine, cruiser, battleship, carrier]
 
-function addShipPiece(ship) {
-  const allBoardBlocks = document.querySelectorAll("#computer div") // get all div elements in computer id
-  let randomBoolean = Math.random() < 0.5
-  let isHorizontal = randomBoolean
-  let randomStartIndex = Math.floor(Math.random() * width * width)
+function addShipPiece(user, ship, startId = null, isHorizontal = null) {
+  const allBoardBlocks = document.querySelectorAll(`#${user} .block`);
+  let randomStartIndex = Math.floor(Math.random() * width * width);
 
-  // valid start for first block
-  let validStart = isHorizontal ? randomStartIndex <= width * width - ship.length ? randomStartIndex :
-  width * width - ship.length : // if it overflws the right edge of the board, that's the new start index
-  // vertical
-  randomStartIndex <= width * width - (ship.length) * width // ship needs enough rows below the starting index to be placed without crossing the bottom boundary of the board
-  ? randomStartIndex
-  : randomStartIndex - ship.length * width + width
+  // Adjust starting index to prevent overflow
+  if (user === "computer") {
+    // Continue with random placement for computer
+    isHorizontal = Math.random() < 0.5; // Random orientation
+    startId = Math.floor(Math.random() * width * width); // Random start index
 
-  let shipBlocks = []
-  for (let i = 0; i < ship.length; i++) {
     if (isHorizontal) {
-      shipBlocks.push(allBoardBlocks[Number(randomStartIndex) + i]) // push first block and second block to board
-    } else { // when it's vertical
-      shipBlocks.push(allBoardBlocks[Number(randomStartIndex) + i * width]) // random block at 52, i+width=10, so 52+10=62 => the block underneath 52
+      startId = startId - startId % width + Math.min(startId % width, width - ship.length);
+    } else {
+      while (startId + (ship.length - 1) * width >= width * width) {
+        startId -= width; // Adjust to fit within vertical boundaries
+      }
     }
   }
 
-  let valid
-  if (isHorizontal) {
-    shipBlocks.every((_shipBlock, index) =>
-      valid = shipBlocks[0].id % width !== width - (shipBlocks.length - (index + 1)))
-  } else {
-    shipBlocks.every((_shipblock, index) =>
-      valid = shipBlocks[0].id < 90 + (width * index + 1))
+  let shipBlocks = [];
+  // collects the blocks where the ship will be placed, it calculates an index for each part of the ship based on its orientation
+  for (let i = 0; i < ship.length; i++) {
+    let idx = isHorizontal ? randomStartIndex + i : randomStartIndex + i * width;
+    if (idx < allBoardBlocks.length) { // Check if the calculated index is valid
+      shipBlocks.push(allBoardBlocks[idx]);
+    } else {
+      // If not valid, restart the process for this ship
+      addShipPiece(ship);
+      return;
+    }
   }
 
-  const notTaken = shipBlocks.every(shipBlock => !shipBlock.classList.contains("taken"))
+  const notTaken = shipBlocks.every(shipBlock => !shipBlock.classList.contains("taken"));
 
-  if (valid && notTaken) {
+  if (notTaken) {
     shipBlocks.forEach(shipBlock => {
-      shipBlock.classList.add(ship.name)
-      shipBlock.classList.add("taken")
-    })
+      shipBlock.classList.add(ship.name);
+      shipBlock.classList.add("taken");
+    });
   } else {
-    addShipPiece(ship)
+    addShipPiece(ship); // If any block is taken, restart the placement
   }
 }
 
-ships.forEach(ship => addShipPiece(ship))
+ships.forEach(ship => addShipPiece("computer", ship));
+
+
+// drag ships
+let draggedShip
+const optionShips = Array.from(optionContainer.chidlren)
+optionShips.forEach(optionShip => optionShip.addEventListener("dragstart", dragStart))
+
+const allPlayerBlocks = document.querySelectorAll("#player div")
+allPlayerBlocks.forEach(playerBlock => {
+  playerBlock.addEventListener("dragover", dragOver)
+  playerBlock.addEventListener("drop", dropShip)
+})
+
+function dragStart(e) {
+  draggedShip = e.target
+}
+
+function dragOver(e) {
+  e.preventDefault()
+}
+
+function dropShip(e) {
+  const startId = e.target.id
+  const ship = ships[draggedShip.id]
+  addShipPiece("player", ship, startId)
+}
