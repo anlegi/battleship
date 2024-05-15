@@ -30,7 +30,7 @@ function createBoard(color, user) {
   for (let i = 0; i < width * width; i++) {
     const block = document.createElement("div")
     block.classList.add("block")
-    block.id = i
+    block.id = user + "-" + i // unique id for either player or compi
     gameBoardContainer.append(block)
   }
 }
@@ -54,74 +54,59 @@ const carrier = new Ship("carrier", 5)
 
 const ships = [destroyer, submarine, cruiser, battleship, carrier]
 
-function addShipPiece(user, ship, startId = null, isHorizontal = null) {
-  const allBoardBlocks = document.querySelectorAll(`#${user} .block`);
-  let randomStartIndex = Math.floor(Math.random() * width * width);
+function addShipPiece(ship) {
+  const allBoardBlocks = document.querySelectorAll("#computer div")
+  let randomBoolean = Math.random() < 0.5
+  let isHorizontal = randomBoolean
+  let randomStartIndex = Math.floor(Math.random() * width * width)
 
-  // Adjust starting index to prevent overflow
-  if (user === "computer") {
-    // Continue with random placement for computer
-    isHorizontal = Math.random() < 0.5; // Random orientation
-    startId = Math.floor(Math.random() * width * width); // Random start index
+  let validStart = isHorizontal ? randomStartIndex <= width * width - ship.length ? randomStartIndex : width * width - ship.length :
+  // vertical
+  randomStartIndex <= width * width - width * ship.length ? randomStartIndex :
+  randomStartIndex - ship.length  * width + width
 
-    if (isHorizontal) {
-      startId = startId - startId % width + Math.min(startId % width, width - ship.length);
-    } else {
-      while (startId + (ship.length - 1) * width >= width * width) {
-        startId -= width; // Adjust to fit within vertical boundaries
-      }
-    }
-  }
 
-  let shipBlocks = [];
-  // collects the blocks where the ship will be placed, it calculates an index for each part of the ship based on its orientation
+  let shipBlocks = []
+
   for (let i = 0; i < ship.length; i++) {
-    let idx = isHorizontal ? randomStartIndex + i : randomStartIndex + i * width;
-    if (idx < allBoardBlocks.length) { // Check if the calculated index is valid
-      shipBlocks.push(allBoardBlocks[idx]);
+    if (isHorizontal) {
+      shipBlocks.push(allBoardBlocks[Number(validStart) + i])
     } else {
-      // If not valid, restart the process for this ship
-      addShipPiece(ship);
-      return;
+      shipBlocks.push(allBoardBlocks[Number(validStart) + i * width])
     }
   }
 
-  const notTaken = shipBlocks.every(shipBlock => !shipBlock.classList.contains("taken"));
 
-  if (notTaken) {
+  // Assuming shipBlocks is an array of DOM elements and 'id' is like 'computer-15'
+let valid;
+
+//HEREEEEEEEEE
+if (isHorizontal) {
+  valid = shipBlocks.every((shipBlock, index) => {
+    const currentId = parseInt(shipBlock.id.split('-')[1]);  // Splitting the id to get the numeric part
+    const baseId = parseInt(shipBlocks[0].id.split('-')[1]);
+    return (baseId % width) + index < width;  // Ensure the ship doesn't wrap to the next line
+  });
+} else {
+  valid = shipBlocks.every((shipBlock, index) => {
+    const currentId = parseInt(shipBlock.id.split('-')[1]);  // Splitting the id to get the numeric part
+    return currentId + (width * index) < width * width;  // Ensure the ship doesn't overflow the board bounds vertically
+  });
+}
+
+
+
+
+  const notTaken = shipBlocks.every(shipBlock => !shipBlock.classList.contains("taken"))
+
+  if (valid && notTaken) {
     shipBlocks.forEach(shipBlock => {
-      shipBlock.classList.add(ship.name);
-      shipBlock.classList.add("taken");
-    });
+      shipBlock.classList.add(ship.name)
+      shipBlock.classList.add("taken")
+    })
   } else {
-    addShipPiece(ship); // If any block is taken, restart the placement
+    addShipPiece(ship)
   }
 }
 
-ships.forEach(ship => addShipPiece("computer", ship));
-
-
-// drag ships
-let draggedShip
-const optionShips = Array.from(optionContainer.chidlren)
-optionShips.forEach(optionShip => optionShip.addEventListener("dragstart", dragStart))
-
-const allPlayerBlocks = document.querySelectorAll("#player div")
-allPlayerBlocks.forEach(playerBlock => {
-  playerBlock.addEventListener("dragover", dragOver)
-  playerBlock.addEventListener("drop", dropShip)
-})
-
-function dragStart(e) {
-  draggedShip = e.target
-}
-
-function dragOver(e) {
-  e.preventDefault()
-}
-
-function dropShip(e) {
-  const startId = e.target.id
-  const ship = ships[draggedShip.id]
-  addShipPiece("player", ship, startId)
-}
+ships.forEach(ship => addShipPiece(ship))
