@@ -149,21 +149,28 @@ allPlayerBlocks.forEach(playerBlock => {
 function dragStart(e) {
   notDropped = false
   draggedShip = e.target
+  resetShipOrientation(draggedShip)
+}
 
-  draggedShip.classList.remove('vertical-destroyer', 'vertical-submarine', 'vertical-cruiser', 'vertical-battleship', 'vertical-carrier')
+function resetShipOrientation(ship) {
+  ship.classList.remove('vertical-destroyer', 'vertical-submarine', 'vertical-cruiser', 'vertical-battleship', 'vertical-carrier', 'horizontal');
 
   if (angle === 90) {
-    if (draggedShip.classList.contains('destroyer-preview')) {
-      draggedShip.classList.add('vertical-destroyer');
-    } else if (draggedShip.classList.contains('submarine-preview')) {
-      draggedShip.classList.add('vertical-submarine');
-    } else if (draggedShip.classList.contains('cruiser-preview')) {
-      draggedShip.classList.add('vertical-cruiser');
-    } else if (draggedShip.classList.contains('battleship-preview')) {
-      draggedShip.classList.add('vertical-battleship');
-    } else if (draggedShip.classList.contains('carrier-preview')) {
-      draggedShip.classList.add('vertical-carrier');
+    ship.classList.add('vertical');
+    // Add specific vertical classes based on ship type
+    if (ship.classList.contains('destroyer-preview')) {
+      ship.classList.add('vertical-destroyer');
+    } else if (ship.classList.contains('submarine-preview')) {
+      ship.classList.add('vertical-submarine');
+    } else if (ship.classList.contains('cruiser-preview')) {
+      ship.classList.add('vertical-cruiser');
+    } else if (ship.classList.contains('battleship-preview')) {
+      ship.classList.add('vertical-battleship');
+    } else if (ship.classList.contains('carrier-preview')) {
+      ship.classList.add('vertical-carrier');
     }
+  } else {
+    ship.classList.add('horizontal')
   }
 }
 
@@ -179,7 +186,7 @@ function dropShip(e) {
   addShipPiece("player", ship, startId)
   if (!notDropped) {
     draggedShip.remove()
+  } else {
+    resetShipOrientation(draggedShip)
   }
-
-  draggedShip.classList.remove('vertical-destroyer', 'vertical-submarine', 'vertical-cruiser', 'vertical-battleship', 'vertical-carrier')
 }
