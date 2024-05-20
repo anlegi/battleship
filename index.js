@@ -4,14 +4,35 @@ const gamesBoardContainer = document.querySelector("#gamesboard-container")
 
 let angle = 0
 function flip() {
-  const optionShips = Array.from(optionContainer.children)
+  const optionShips = Array.from(optionContainer.children);
   if (angle === 0) {
-    angle = 90
+    angle = 90;
+    optionShips.forEach(ship => {
+      ship.classList.remove('horizontal')
+      ship.classList.add('vertical');
+      // Update class names based on ship type to apply vertical styles
+      if (ship.classList.contains('destroyer-preview')) {
+        ship.classList.add('vertical-destroyer');
+      } else if (ship.classList.contains('submarine-preview')) {
+        ship.classList.add('vertical-submarine');
+      } else if (ship.classList.contains('cruiser-preview')) {
+        ship.classList.add('vertical-cruiser');
+      } else if (ship.classList.contains('battleship-preview')) {
+        ship.classList.add('vertical-battleship');
+      } else if (ship.classList.contains('carrier-preview')) {
+        ship.classList.add('vertical-carrier');
+      }
+    });
   } else {
-    angle = 0
+    angle = 0;
+    optionShips.forEach(ship => {
+      ship.classList.remove('vertical');
+      ship.classList.remove('vertical-destroyer', 'vertical-submarine', 'vertical-cruiser', 'vertical-battleship', 'vertical-carrier');
+      ship.classList.add('horizontal');
+    });
   }
-  optionShips.forEach(optionShip => optionShip.style.transform = `rotate(${angle}deg)`) // css in js
 }
+
 flipButton.addEventListener("click", flip)
 
 
@@ -78,7 +99,6 @@ function addShipPiece(user, ship, startId = null) {
   // Assuming shipBlocks is an array of DOM elements and 'id' is like 'computer-15'
   let valid;
 
-  //HEREEEEEEEEE
   if (isHorizontal) {
     valid = shipBlocks.every((shipBlock, index) => {
       const currentId = parseInt(shipBlock.id.split('-')[1]);  // Splitting the id to get the numeric part
@@ -129,6 +149,22 @@ allPlayerBlocks.forEach(playerBlock => {
 function dragStart(e) {
   notDropped = false
   draggedShip = e.target
+
+  draggedShip.classList.remove('vertical-destroyer', 'vertical-submarine', 'vertical-cruiser', 'vertical-battleship', 'vertical-carrier')
+
+  if (angle === 90) {
+    if (draggedShip.classList.contains('destroyer-preview')) {
+      draggedShip.classList.add('vertical-destroyer');
+    } else if (draggedShip.classList.contains('submarine-preview')) {
+      draggedShip.classList.add('vertical-submarine');
+    } else if (draggedShip.classList.contains('cruiser-preview')) {
+      draggedShip.classList.add('vertical-cruiser');
+    } else if (draggedShip.classList.contains('battleship-preview')) {
+      draggedShip.classList.add('vertical-battleship');
+    } else if (draggedShip.classList.contains('carrier-preview')) {
+      draggedShip.classList.add('vertical-carrier');
+    }
+  }
 }
 
 function dragOver(e) {
@@ -144,4 +180,6 @@ function dropShip(e) {
   if (!notDropped) {
     draggedShip.remove()
   }
+
+  draggedShip.classList.remove('vertical-destroyer', 'vertical-submarine', 'vertical-cruiser', 'vertical-battleship', 'vertical-carrier')
 }

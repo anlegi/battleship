@@ -76,3 +76,23 @@
   height: 10px;
   margin: 3px;
 }
+
+.vertical-destroyer {
+  width: 10px;
+  height: 40px;
+}
+
+.vertical-submarine, .vertical-cruiser {
+  width: 10px;
+  height: 60px;
+}
+
+.vertical-battleship {
+  width: 10px;
+  height: 80px;
+}
+
+.vertical-carrier {
+  width: 10px;
+  height: 100px; 
+}
