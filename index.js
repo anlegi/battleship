@@ -96,7 +96,7 @@ function addShipPiece(user, ship, startId = null) {
     }
   }
 
-  // Assuming shipBlocks is an array of DOM elements and 'id' is like 'computer-15'
+
   let valid;
 
   if (isHorizontal) {
@@ -108,7 +108,7 @@ function addShipPiece(user, ship, startId = null) {
   } else {
     valid = shipBlocks.every((shipBlock, index) => {
       const currentId = parseInt(shipBlock.id.split('-')[1]);  // Splitting the id to get the numeric part
-      return currentId + (width * index) < width * width;  // Ensure the ship doesn't overflow the board bounds vertically
+      return currentId + (width * index) < width * width;  
     });
   }
 

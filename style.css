@@ -1,7 +1,7 @@
 .option-container {
   width: 500px;
-  height: 60px;
-  background-color: yellow;
+  height: 110px;
+  background-color: rgb(238, 238, 238);
   display: flex;
   align-items: center;
   margin: 30px 0;
@@ -24,75 +24,87 @@
 .block {
   width: 20px;
   height: 20px;
+  box-sizing: border-box;  /* Ensures that the border is included in the width/height */
+  border: 1px solid #ccc;  /* Light grey border for each block */
+  background-color: #f0f0f0;
 }
 
 
 .destroyer {
-  background-color: brown;
+  background-color: rgb(236, 255, 67);
 }
 
 .submarine {
-  background-color: rgb(104, 153, 104);
+  background-color: rgb(255, 180, 82);
 }
 
 .cruiser {
-  background-color: purple;
+  background-color: rgb(241, 67, 67);
 }
 
 .battleship {
-  background-color: pink;
-}
-
-.carrier {
   background-color: blue;
 }
 
+.carrier {
+  background-color: rgb(91, 239, 62);
+}
+
 .destroyer-preview {
-  width: 20px;
-  height: 10px;
+  width: 40px;
+  height: 20px;
   margin: 3px;
+  border: 1px solid #ccc;
 }
 
 .submarine-preview {
-  width: 30px;
-  height: 10px;
+  width: 60px;
+  height: 20px;
   margin: 3px;
+  border: 1px solid #ccc;
 }
 
 .cruiser-preview {
-  width: 30px;
-  height: 10px;
-  margin: 3px
+  width: 60px;
+  height: 20px;
+  margin: 3px;
+  border: 1px solid #ccc;
 }
 
 .battleship-preview {
-  width: 40px;
-  height: 10px;
+  width: 80px;
+  height: 20px;
   margin: 3px;
+  border: 1px solid #ccc;
 }
 
 .carrier-preview {
-  width: 50px;
-  height: 10px;
+  width: 100px;
+  height: 20px;
   margin: 3px;
+  border: 1px solid #ccc;
 }
 
 .vertical-destroyer {
-  width: 10px;
+  width: 20px;
   height: 40px;
+  border: 1px solid #ccc;
 }
 
 .vertical-submarine, .vertical-cruiser {
-  width: 10px;
+  width: 20px;
   height: 60px;
+  border: 1px solid #ccc;
 }
 
 .vertical-battleship {
-  width: 10px;
+  width: 20px;
   height: 80px;
+  border: 1px solid #ccc;
 }
 
 .vertical-carrier {
-  width: 10px;
-  height: 100px; 
+  width: 20px;
+  height: 100px;
+  border: 1px solid #ccc;
 }
