@@ -108,7 +108,7 @@ function addShipPiece(user, ship, startId = null) {
   } else {
     valid = shipBlocks.every((shipBlock, index) => {
       const currentId = parseInt(shipBlock.id.split('-')[1]);  // Splitting the id to get the numeric part
-      return currentId + (width * index) < width * width;  
+      return currentId + (width * index) < width * width;
     });
   }
 
@@ -118,6 +118,9 @@ function addShipPiece(user, ship, startId = null) {
     shipBlocks.forEach(shipBlock => {
       shipBlock.classList.add(ship.name)
       shipBlock.classList.add("taken")
+      if (user === 'computer') {
+        shipBlock.classList.add('hidden'); // Hide the computer's ships
+      }
     })
   } else {
     if (user === "computer") addShipPiece("computer", ship)
@@ -189,4 +192,23 @@ function dropShip(e) {
   } else {
     resetShipOrientation(draggedShip)
   }
+}
+
+
+const allComputerBlocks = document.querySelectorAll("#computer div")
+allComputerBlocks.forEach((computerBlock) => {
+  computerBlock.addEventListener("click", handleComputerClick)
+})
+
+function handleComputerClick(e) {
+  const block = e.target
+  if (block.classList.contains("taken")) {
+    block.classList.add("hit")
+    block.classList.remove("hidden")
+    document.getElementById("info").textContent = "Hit!"
+  } else {
+    block.classList.add("miss")
+    document.getElementById("info").textContent = "Miss!"
+  }
+  block.removeEventListener("click", handleComputerClick); // Prevent clicking the same block multiple times
 }
