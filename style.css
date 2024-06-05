@@ -121,3 +121,10 @@
 .miss {
   background-color: #ccc;
 }
+
+
+.sunk {
+  border: 2px solid red;
+  background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="red"%3E%3Cpath d="M10 10 L90 90 M90 10 L10 90" stroke="red" stroke-width="10"/%3E%3C/svg%3E');
+  background-size: cover;
+}
